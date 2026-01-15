@@ -321,43 +321,67 @@
 
   <script>
     const BANKS = {
-      'Yapı Kredi': {
-        scheme: 'ykmobil://',
-        ios: 'https://apps.apple.com/tr/app/yapı-kredi-mobil/id392583273',
-        android: 'https://play.google.com/store/apps/details?id=com.ykb.android'
-      },
-      'Akbank': {
-        scheme: 'akbank://',
-        ios: 'https://apps.apple.com/tr/app/akbank/id378341309',
-        android: 'https://play.google.com/store/apps/details?id=com.akbank.android.apps.akbank_direkt'
-      },
-      'İş Bankası': {
-        scheme: 'iscep://',
-        ios: 'https://apps.apple.com/tr/app/i%C5%9Fcep/id367505142',
-        android: 'https://play.google.com/store/apps/details?id=com.pozitron.iscep'
-      },
-      'Garanti BBVA': {
-        scheme: 'garantibbva://',
-        ios: 'https://apps.apple.com/tr/app/garanti-bbva/id417407412',
-        android: 'https://play.google.com/store/apps/details?id=com.garanti.cepsubesi'
-      },
-      'QNB Finansbank': {
-        scheme: 'qnbmobil://',
-        ios: 'https://apps.apple.com/tr/app/qnb-mobil/id443612980',
-        android: 'https://play.google.com/store/apps/details?id=com.qnbfinansbank.mobile'
-      },
-      'Halkbank': {
-        scheme: 'halkbank://',
-        ios: 'https://apps.apple.com/tr/app/halkbank-mobil/id565754739',
-        android: 'https://play.google.com/store/apps/details?id=com.halkbank.mobile'
-      },
-      'TEB': {
-        scheme: 'cepteb://',
-        ios: 'https://apps.apple.com/tr/app/cepteb/id366961019',
-        android: 'https://play.google.com/store/apps/details?id=com.teb'
-      }
-    };
-
+  'Yapı Kredi': {
+    scheme: 'ykb://', // Genellikle ykb:// daha yaygındır
+    ios: 'https://apps.apple.com/tr/app/yap%C4%B1-kredi-mobile/id458627086',
+    android: 'https://play.google.com/store/apps/details?id=com.ykb.android'
+  },
+  'Akbank': {
+    scheme: 'akbank://',
+    ios: 'https://apps.apple.com/tr/app/akbank/id378341309',
+    android: 'https://play.google.com/store/apps/details?id=com.akbank.android.apps.akbank_direkt'
+  },
+  'İş Bankası': {
+    scheme: 'iscep://',
+    ios: 'https://apps.apple.com/tr/app/i%C5%9Fcep/id367505142',
+    android: 'https://play.google.com/store/apps/details?id=com.pozitron.iscep'
+  },
+  'Garanti BBVA': {
+    scheme: 'garantibbva://',
+    ios: 'https://apps.apple.com/tr/app/garanti-bbva-mobil/id417407412',
+    android: 'https://play.google.com/store/apps/details?id=com.garanti.cepsubesi'
+  },
+  'QNB': { // Marka sadeleşmesine gitti
+    scheme: 'qnbmobil://',
+    ios: 'https://apps.apple.com/tr/app/qnb-mobil/id443612980',
+    android: 'https://play.google.com/store/apps/details?id=com.qnbfinansbank.mobile'
+  },
+  'Halkbank': {
+    scheme: 'halkbank://',
+    ios: 'https://apps.apple.com/tr/app/halkbank-mobil/id565754739',
+    android: 'https://play.google.com/store/apps/details?id=com.halkbank.mobile'
+  },
+  'TEB': {
+    scheme: 'cepteb://',
+    ios: 'https://apps.apple.com/tr/app/cepteb/id366961019',
+    android: 'https://play.google.com/store/apps/details?id=com.teb'
+  },
+  'Ziraat Bankası': {
+    scheme: 'ziraatmobil://',
+    ios: 'https://apps.apple.com/tr/app/ziraat-mobil/id601090581',
+    android: 'https://play.google.com/store/apps/details?id=com.ziraat.ziraatmobil'
+  },
+  'VakıfBank': {
+    scheme: 'vakifbankmobil://',
+    ios: 'https://apps.apple.com/tr/app/vak%C4%B1fbank-mobil/id630456184',
+    android: 'https://play.google.com/store/apps/details?id=com.vakifbank.mobile'
+  },
+  'DenizBank': {
+    scheme: 'mobildeniz://',
+    ios: 'https://apps.apple.com/tr/app/mobildeniz/id542157092',
+    android: 'https://play.google.com/store/apps/details?id=com.denizbank.mobildeniz'
+  },
+  'Enpara.com': {
+    scheme: 'enpara://',
+    ios: 'https://apps.apple.com/tr/app/enpara-com-cep-%C5%9Fubesi/id543780658',
+    android: 'https://play.google.com/store/apps/details?id=com.finansbank.enpara'
+  },
+  'Papara': {
+    scheme: 'papara://',
+    ios: 'https://apps.apple.com/tr/app/papara/id1146465858',
+    android: 'https://play.google.com/store/apps/details?id=com.m724.papara'
+  }
+};
     const toast = document.getElementById('toast');
     let toastTimer;
 
