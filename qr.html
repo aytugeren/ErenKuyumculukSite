@@ -391,7 +391,7 @@
     const normalizeUrl = (value) => {
       if (!value) return '';
       const hasProtocol = /^https?:\/\//i.test(value);
-      return hasProtocol ? value : `https://${value}`;
+      return hasProtocol ? value : `${value}`;
     };
 
     button.addEventListener('click', () => {
