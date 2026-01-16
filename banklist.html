@@ -83,6 +83,38 @@
       grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     }
 
+    .bank-grid--hidden {
+      display: none;
+      margin-top: 18px;
+    }
+
+    .bank-grid--hidden.is-visible {
+      display: grid;
+    }
+
+    .toggle-button {
+      margin: 18px auto 0;
+      height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(240, 212, 138, 0.4);
+      background: rgba(240, 212, 138, 0.12);
+      color: var(--text);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .toggle-button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(240, 212, 138, 0.7);
+      box-shadow: 0 10px 20px rgba(240, 212, 138, 0.18);
+    }
+
     .bank-card {
       position: relative;
       overflow: hidden;
@@ -205,6 +237,7 @@
       .panel { padding: 20px; }
       .bank-card { padding: 16px; }
       .bank-logo { width: 52px; height: 52px; }
+      .toggle-button { width: 100%; }
     }
   </style>
 </head>
@@ -214,12 +247,31 @@
   <main>
     <header>
       <h1>Banka Listesi</h1>
-      <p>Logoya dokunun, IBAN kopyalansın ve banka uygulamasina yonlensin.</p>
+      <p>Logoya dokunun, IBAN kopyalansın</p>
     </header>
 
     <section class="panel">
       <div class="bank-grid">
-        <a class="bank-card" href="yapikredi://" data-bank="Yapı Kredi" data-iban="TR94 0006 7010 0000 0080 7859 23">
+        <a class="bank-card" data-bank="TEB" data-iban="TR68 0003 2000 0000 0061 8370 70">
+          <div class="bank-top">
+            <div class="bank-logo">
+              <img src="bankalogos/teb.jpeg" alt="TEB">
+            </div>
+            <div>
+              <div class="bank-name">TEB</div>
+              <div class="iban">TR68 0003 2000 0000 0061 8370 70</div>
+            </div>
+          </div>
+          <div class="hint"><span></span>Dokun ve kopyala</div>
+        </a>
+      </div>
+
+      <button class="toggle-button" id="show-others" type="button" aria-expanded="false">
+        Diger bankalari goruntule
+      </button>
+
+      <div class="bank-grid bank-grid--hidden" id="other-banks">
+        <a class="bank-card" data-bank="Yapı Kredi" data-iban="TR94 0006 7010 0000 0080 7859 23">
           <div class="bank-top">
             <div class="bank-logo">
               <img src="bankalogos/yapikredi.png" alt="Yapı Kredi">
@@ -232,7 +284,7 @@
           <div class="hint"><span></span>Dokun ve kopyala</div>
         </a>
 
-        <a class="bank-card" href="akbank://" data-bank="Akbank" data-iban="TR20 0004 6002 1288 8000 0952 98">
+        <a class="bank-card" data-bank="Akbank" data-iban="TR20 0004 6002 1288 8000 0952 98">
           <div class="bank-top">
             <div class="bank-logo">
               <img src="bankalogos/akbank.jpg" alt="Akbank">
@@ -245,7 +297,7 @@
           <div class="hint"><span></span>Dokun ve kopyala</div>
         </a>
 
-        <a class="bank-card" href="isbank://" data-bank="İş Bankası" data-iban="TR87 0006 4000 0011 2600 5378 88">
+        <a class="bank-card" data-bank="İş Bankası" data-iban="TR87 0006 4000 0011 2600 5378 88">
           <div class="bank-top">
             <div class="bank-logo">
               <img src="bankalogos/isbankasi.png" alt="İş Bankası">
@@ -258,7 +310,7 @@
           <div class="hint"><span></span>Dokun ve kopyala</div>
         </a>
 
-        <a class="bank-card" href="garanti://" data-bank="Garanti BBVA" data-iban="TR26 0006 2000 5950 0006 2997 56">
+        <a class="bank-card" data-bank="Garanti BBVA" data-iban="TR26 0006 2000 5950 0006 2997 56">
           <div class="bank-top">
             <div class="bank-logo">
               <img src="bankalogos/garanti.png" alt="Garanti BBVA">
@@ -271,7 +323,7 @@
           <div class="hint"><span></span>Dokun ve kopyala</div>
         </a>
 
-        <a class="bank-card" href="qnbfinansbank://" data-bank="QNB Finansbank" data-iban="TR73 0011 1000 0000 0084 8028 02">
+        <a class="bank-card" data-bank="QNB Finansbank" data-iban="TR73 0011 1000 0000 0084 8028 02">
           <div class="bank-top">
             <div class="bank-logo">
               <img src="bankalogos/qnbfinans.png" alt="QNB Finansbank">
@@ -284,7 +336,7 @@
           <div class="hint"><span></span>Dokun ve kopyala</div>
         </a>
 
-        <a class="bank-card" href="halkbank://" data-bank="Halkbank" data-iban="TR74 0001 2009 7550 0010 2607 04">
+        <a class="bank-card" data-bank="Halkbank" data-iban="TR74 0001 2009 7550 0010 2607 04">
           <div class="bank-top">
             <div class="bank-logo">
               <img src="bankalogos/halkbank.png" alt="Halkbank">
@@ -292,19 +344,6 @@
             <div>
               <div class="bank-name">HALKBANK</div>
               <div class="iban">TR74 0001 2009 7550 0010 2607 04</div>
-            </div>
-          </div>
-          <div class="hint"><span></span>Dokun ve kopyala</div>
-        </a>
-
-        <a class="bank-card" href="cepteb://" data-bank="TEB" data-iban="TR68 0003 2000 0000 0061 8370 70">
-          <div class="bank-top">
-            <div class="bank-logo">
-              <img src="bankalogos/teb.jpeg" alt="TEB">
-            </div>
-            <div>
-              <div class="bank-name">TEB</div>
-              <div class="iban">TR68 0003 2000 0000 0061 8370 70</div>
             </div>
           </div>
           <div class="hint"><span></span>Dokun ve kopyala</div>
@@ -320,43 +359,6 @@
   <div class="toast" id="toast">IBAN kopyalandi.</div>
 
   <script>
-    const BANKS = {
-  'Yapı Kredi': {
-    scheme: 'https://q2x3.tr.adj.st/www.yapikredi.com.tr/musteriol?&adj_t=85duuuq_px86l28&adj_campaign=Uygulama_Marketi&adj_adgroup=QR', // Genellikle ykb:// daha yaygındır
-    ios: 'https://q2x3.tr.adj.st/www.yapikredi.com.tr/musteriol?&adj_t=85duuuq_px86l28&adj_campaign=Uygulama_Marketi&adj_adgroup=QR',
-    android: 'https://q2x3.tr.adj.st/www.yapikredi.com.tr/musteriol?&adj_t=85duuuq_px86l28&adj_campaign=Uygulama_Marketi&adj_adgroup=QR'
-  },
-  'Akbank': {
-    scheme: 'https://app.tr.adjust.com/jsr?url=https%3A%2F%2Fmza5.tr.adj.st%2Fakbankdirekt%3Ffunction%3D609%26adj_t%3Db754ymr%26adj_deep_link%3Dakbankdirekt%253A%252F%252Fsplash%252Ffunction%252F609%26adj_campaign%3Dqr',
-    ios: 'https://app.tr.adjust.com/jsr?url=https%3A%2F%2Fmza5.tr.adj.st%2Fakbankdirekt%3Ffunction%3D609%26adj_t%3Db754ymr%26adj_deep_link%3Dakbankdirekt%253A%252F%252Fsplash%252Ffunction%252F609%26adj_campaign%3Dqr',
-    android: 'https://app.tr.adjust.com/jsr?url=https%3A%2F%2Fmza5.tr.adj.st%2Fakbankdirekt%3Ffunction%3D609%26adj_t%3Db754ymr%26adj_deep_link%3Dakbankdirekt%253A%252F%252Fsplash%252Ffunction%252F609%26adj_campaign%3Dqr'
-  },
-  'İş Bankası': {
-    scheme: 'https://isbank.page.link/?link=https://www.isbank.com.tr/iscep?iscepnavid%3DMain%26campaignid%3Discep-qr-subat&apn=com.pozitron.iscep&amv=304&isi=308261752&ibi=mobile.isbank.iscep&utm_campaign=iscep-web&utm_medium=qr&utm_source=web&cid=5299879171478091446&_osl=https://isbank.page.link/p3T4&_fpb=CMwGEIYDGgV0ci1UUg==&_cpt=cpit&_iumenbl=1&_iumchkactval=1&_plt=837&_uit=7742&_cpb=1',
-    ios: 'https://isbank.page.link/?link=https://www.isbank.com.tr/iscep?iscepnavid%3DMain%26campaignid%3Discep-qr-subat&apn=com.pozitron.iscep&amv=304&isi=308261752&ibi=mobile.isbank.iscep&utm_campaign=iscep-web&utm_medium=qr&utm_source=web&cid=5299879171478091446&_osl=https://isbank.page.link/p3T4&_fpb=CMwGEIYDGgV0ci1UUg==&_cpt=cpit&_iumenbl=1&_iumchkactval=1&_plt=837&_uit=7742&_cpb=1',
-    android: 'https://isbank.page.link/?link=https://www.isbank.com.tr/iscep?iscepnavid%3DMain%26campaignid%3Discep-qr-subat&apn=com.pozitron.iscep&amv=304&isi=308261752&ibi=mobile.isbank.iscep&utm_campaign=iscep-web&utm_medium=qr&utm_source=web&cid=5299879171478091446&_osl=https://isbank.page.link/p3T4&_fpb=CMwGEIYDGgV0ci1UUg==&_cpt=cpit&_iumenbl=1&_iumchkactval=1&_plt=837&_uit=7742&_cpb=1'
-  },
-  'Garanti BBVA': {
-    scheme: 'https://garantibbva.com.tr/cep',
-    ios: 'https://garantibbva.com.tr/cep',
-    android: 'https://garantibbva.com.tr/cep'
-  },
-  'QNB': { // Marka sadeleşmesine gitti
-    scheme: 'qnbmobil://',
-    ios: 'https://apps.apple.com/tr/app/qnb-finansbank-cep-%C5%9Fubesi/id739655617?l=tr',
-    android: 'https://play.google.com/store/apps/details?id=com.finansbank.mobile.cepsube&hl=tr'
-  },
-  'Halkbank': {
-    scheme: 'https://www.halkbank.com.tr/url/hm.html',
-    ios: 'https://www.halkbank.com.tr/url/hm.html',
-    android: 'https://www.halkbank.com.tr/url/hm.html'
-  },
-  'TEB': {
-    scheme: 'https://app.tr.adjust.com/cda9upn',
-    ios: 'https://app.tr.adjust.com/cda9upn',
-    android: 'https://app.tr.adjust.com/cda9upn'
-  }
-};
     const toast = document.getElementById('toast');
     let toastTimer;
 
@@ -386,57 +388,35 @@
       }
     };
 
-    const getPlatform = () => {
-      const ua = navigator.userAgent || '';
-      if (/iphone|ipad|ipod/i.test(ua)) return 'ios';
-      if (/android/i.test(ua)) return 'android';
-      return 'other';
-    };
+    const bankCards = document.querySelectorAll('.bank-card');
+    const toggleButton = document.getElementById('show-others');
+    const otherBanks = document.getElementById('other-banks');
 
-    const openBankApp = (bankKey) => {
-      const bank = BANKS[bankKey];
-      if (!bank) return;
+    bankCards.forEach((card) => {
+      // Yönlendirmeyi tamamen kapatmak icin href degerini devre disi birak.
+      card.removeAttribute('href');
+    });
 
-      const platform = getPlatform();
-      const fallbackUrl = platform === 'ios' ? bank.ios : bank.android;
-      let fallbackTimer;
+    if (toggleButton && otherBanks) {
+      toggleButton.addEventListener('click', () => {
+        const isVisible = otherBanks.classList.toggle('is-visible');
+        toggleButton.setAttribute('aria-expanded', String(isVisible));
+        toggleButton.textContent = isVisible ? 'Diger bankalari gizle' : 'Diger bankalari goruntule';
+      });
+    }
 
-      const clearFallback = () => {
-        if (fallbackTimer) {
-          clearTimeout(fallbackTimer);
-          fallbackTimer = null;
-        }
-      };
-
-      const handleVisibility = () => {
-        if (document.hidden) clearFallback();
-      };
-
-      document.addEventListener('visibilitychange', handleVisibility, { once: true });
-
-      // Deeplink dene, 1.2-1.5 sn sonra store fallback uygula.
-      window.location = bank.scheme;
-      fallbackTimer = setTimeout(() => {
-        if (platform === 'ios' || platform === 'android') {
-          window.location = fallbackUrl;
-        }
-      }, 1300);
-    };
-
-    document.querySelectorAll('.bank-card').forEach((card) => {
+    bankCards.forEach((card) => {
       card.addEventListener('click', async (event) => {
         event.preventDefault();
         const iban = card.dataset.iban;
-        const bankKey = card.dataset.bank;
+        const bankName = card.dataset.bank;
 
         try {
           await copyIban(iban);
-          showToast(`${bankKey} IBAN kopyalandi.`);
+          showToast(`${bankName} IBAN kopyalandi.`);
         } catch (error) {
           showToast('IBAN kopyalanamadi.');
         }
-
-        openBankApp(bankKey);
       });
     });
   </script>
