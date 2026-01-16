@@ -331,18 +331,14 @@
       exportCanvas.height = size;
       const ctx = exportCanvas.getContext('2d');
 
-      const bg = ctx.createRadialGradient(size * 0.35, size * 0.25, 40, size * 0.5, size * 0.5, size * 0.8);
-      bg.addColorStop(0, '#2a231a');
-      bg.addColorStop(0.5, '#18130e');
-      bg.addColorStop(1, '#0b0806');
-      ctx.fillStyle = bg;
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, size, size);
 
       roundedRect(ctx, frameX, frameY, frameSize, frameSize, 36);
-      ctx.fillStyle = '#16120c';
+      ctx.fillStyle = '#ffffff';
       ctx.fill();
       ctx.lineWidth = 4;
-      ctx.strokeStyle = '#b89c62';
+      ctx.strokeStyle = '#d6c08a';
       ctx.stroke();
 
       const qrBackSize = frameSize - 70;
@@ -376,7 +372,7 @@
         ctx.drawImage(logoImage, centerX - logoSize / 2, centerY - logoSize / 2, logoSize, logoSize);
       }
 
-      ctx.fillStyle = '#f0d48a';
+      ctx.fillStyle = '#b89c62';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.font = '600 32px "Cinzel", serif';
