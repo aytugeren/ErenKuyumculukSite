@@ -289,6 +289,8 @@
     const qrContainer = document.getElementById('qr-code');
     const message = document.getElementById('qr-message');
     const qrDownload = document.getElementById('qr-download');
+    const qrLogo = document.querySelector('.qr-logo');
+    let allowLogo = true;
 
     const logoImage = new Image();
     logoImage.src = 'logo.svg';
@@ -304,7 +306,33 @@
       ctx.closePath();
     };
 
+    const getByteLength = (value) => new TextEncoder().encode(value).length;
+
+    const pickErrorCorrection = (value) => {
+      const bytes = getByteLength(value);
+      if (bytes > 2953) {
+        return { level: null, bytes };
+      }
+      if (bytes > 2024) {
+        return { level: QRCode.CorrectLevel.L, bytes };
+      }
+      return { level: QRCode.CorrectLevel.H, bytes };
+    };
+
     const createQr = (value) => {
+      const { level, bytes } = pickErrorCorrection(value);
+      if (!level) {
+        message.textContent = `Metin QR kapasitesini aşıyor (${bytes} byte).`;
+        qrContainer.innerHTML = '';
+        qrDownload.removeAttribute('href');
+        return;
+      }
+      const isLowCorrection = level === QRCode.CorrectLevel.L;
+      allowLogo = !isLowCorrection;
+      qrLogo.style.display = allowLogo ? '' : 'none';
+      message.textContent = isLowCorrection
+        ? 'Uzun veri algılandı. Hata düzeltme düşürüldü, logo gizlendi.'
+        : '';
       qrContainer.innerHTML = '';
       new QRCode(qrContainer, {
         text: value,
@@ -312,7 +340,7 @@
         height: 220,
         colorDark: '#0e0b08',
         colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
+        correctLevel: level
       });
       requestAnimationFrame(updateDownloadLink);
     };
@@ -356,20 +384,22 @@
         ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
       }
 
-      const centerX = frameX + frameSize / 2;
-      const centerY = frameY + frameSize / 2;
-      const logoRadius = 46;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, logoRadius, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
-      ctx.fill();
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = '#caa657';
-      ctx.stroke();
+      if (allowLogo) {
+        const centerX = frameX + frameSize / 2;
+        const centerY = frameY + frameSize / 2;
+        const logoRadius = 46;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, logoRadius, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = '#caa657';
+        ctx.stroke();
 
-      if (logoImage.complete && logoImage.naturalWidth) {
-        const logoSize = logoRadius * 1.2;
-        ctx.drawImage(logoImage, centerX - logoSize / 2, centerY - logoSize / 2, logoSize, logoSize);
+        if (logoImage.complete && logoImage.naturalWidth) {
+          const logoSize = logoRadius * 1.2;
+          ctx.drawImage(logoImage, centerX - logoSize / 2, centerY - logoSize / 2, logoSize, logoSize);
+        }
       }
 
       ctx.fillStyle = '#b89c62';
