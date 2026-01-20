@@ -282,7 +282,7 @@
     </footer>
   </main>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
   <script>
     const input = document.getElementById('qr-input');
     const button = document.getElementById('qr-generate');
@@ -308,15 +308,59 @@
 
     const getByteLength = (value) => new TextEncoder().encode(value).length;
 
+    const drawQrToCanvas = (qr, canvas, size) => {
+      const moduleCount = qr.getModuleCount();
+      const cellSize = Math.floor(size / moduleCount);
+      const margin = Math.floor((size - moduleCount * cellSize) / 2);
+      const renderSize = moduleCount * cellSize + margin * 2;
+
+      canvas.width = renderSize;
+      canvas.height = renderSize;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, renderSize, renderSize);
+      ctx.fillStyle = '#0e0b08';
+
+      for (let row = 0; row < moduleCount; row += 1) {
+        for (let col = 0; col < moduleCount; col += 1) {
+          if (qr.isDark(row, col)) {
+            ctx.fillRect(
+              margin + row * cellSize,
+              margin + col * cellSize,
+              cellSize,
+              cellSize
+            );
+          }
+        }
+      }
+    };
+
+    const buildQr = (value, level) => {
+      qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+      for (let type = 1; type <= 40; type += 1) {
+        try {
+          const qr = qrcode(type, level);
+          qr.addData(value);
+          qr.make();
+          return qr;
+        } catch (error) {
+          if (!String(error).includes('code length overflow')) {
+            throw error;
+          }
+        }
+      }
+      return null;
+    };
+
     const pickErrorCorrection = (value) => {
       const bytes = getByteLength(value);
       if (bytes > 2953) {
         return { level: null, bytes };
       }
       if (bytes > 2024) {
-        return { level: QRCode.CorrectLevel.L, bytes };
+        return { level: 'L', bytes };
       }
-      return { level: QRCode.CorrectLevel.H, bytes };
+      return { level: 'H', bytes };
     };
 
     const createQr = (value) => {
@@ -327,21 +371,23 @@
         qrDownload.removeAttribute('href');
         return;
       }
-      const isLowCorrection = level === QRCode.CorrectLevel.L;
+      const isLowCorrection = level === 'L';
       allowLogo = !isLowCorrection;
       qrLogo.style.display = allowLogo ? '' : 'none';
       message.textContent = isLowCorrection
         ? 'Uzun veri algılandı. Hata düzeltme düşürüldü, logo gizlendi.'
         : '';
       qrContainer.innerHTML = '';
-      new QRCode(qrContainer, {
-        text: value,
-        width: 220,
-        height: 220,
-        colorDark: '#0e0b08',
-        colorLight: '#ffffff',
-        correctLevel: level
-      });
+      const qr = buildQr(value, level);
+      if (!qr) {
+        message.textContent = 'QR olusturulurken bir hata olustu.';
+        qrContainer.innerHTML = '';
+        qrDownload.removeAttribute('href');
+        return;
+      }
+      const qrCanvas = document.createElement('canvas');
+      drawQrToCanvas(qr, qrCanvas, 220);
+      qrContainer.appendChild(qrCanvas);
       requestAnimationFrame(updateDownloadLink);
     };
 
