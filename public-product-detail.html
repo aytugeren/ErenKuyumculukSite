@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f7f3ed" />
+  <title>Eren Kuyumculuk | Ürün Detayı</title>
+  <style>
+    :root{
+      --page:#f7f3ed;
+      --surface:#ffffff;
+      --surface-soft:#fbfaf8;
+      --surface-warm:#fffaf2;
+      --text:#28231d;
+      --text-strong:#1f1b16;
+      --muted:#8a8073;
+      --muted-2:#5a5147;
+      --gold:#b98239;
+      --gold-dark:#a66f2d;
+      --gold-brand:#94672b;
+      --line:#e8ddcd;
+      --line-warm:#eadcc8;
+      --shadow:0 8px 26px rgba(59,44,24,.07);
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--page);color:var(--text)}
+    body{
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+    button{font:inherit}
+    img{display:block;max-width:100%}
+
+    .page{
+      min-height:100vh;
+      max-width:1152px;
+      margin:0 auto;
+      padding:20px 16px 36px;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .topbar{
+      margin-bottom:20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .back-btn{
+      border:0;
+      background:rgba(255,255,255,.78);
+      box-shadow:0 2px 8px rgba(0,0,0,.06);
+      border-radius:999px;
+      padding:10px 16px;
+      color:var(--text);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+    .back-btn:hover{background:#fff;transform:translateY(-1px)}
+    .brand{
+      color:var(--gold-brand);
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:21px;
+      white-space:nowrap;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:minmax(0,1.04fr) minmax(360px,.96fr);
+      gap:32px;
+      align-items:start;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.9);
+      box-shadow:var(--shadow);
+      border-radius:26px;
+    }
+
+    .image-card{overflow:hidden;background:#fff}
+    .image-stage{
+      aspect-ratio:1/1;
+      background:var(--surface-soft);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .image-stage img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+    }
+
+    .image-empty{
+      color:var(--muted);
+      font-size:15px;
+    }
+
+    .thumbs{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:12px;
+    }
+    .thumb{
+      aspect-ratio:1/1;
+      overflow:hidden;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.04);
+      cursor:pointer;
+      padding:0;
+      transition:.16s ease;
+    }
+    .thumb:hover{border-color:#c9954a}
+    .thumb.active{
+      border-color:var(--gold);
+      box-shadow:0 0 0 2px rgba(201,149,74,.2);
+    }
+    .thumb img{width:100%;height:100%;object-fit:cover}
+
+    .detail-card{padding:28px}
+    .meta{
+      margin-bottom:16px;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:8px;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .dot{width:4px;height:4px;border-radius:50%;background:#c9954a}
+    h1,h2,p{margin-top:0}
+    h1{
+      margin-bottom:0;
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:clamp(38px,5vw,54px);
+      line-height:1.06;
+      font-weight:500;
+      color:var(--text-strong);
+    }
+    .price-row{
+      margin-top:20px;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:flex-end;
+      gap:12px;
+    }
+    .price{
+      color:var(--gold-dark);
+      font-size:31px;
+      font-weight:700;
+    }
+    .old-price{
+      padding-bottom:3px;
+      color:var(--muted);
+      font-size:18px;
+      text-decoration:line-through;
+    }
+    .short-desc{
+      margin:20px 0 0;
+      max-width:680px;
+      color:var(--muted-2);
+      font-size:15px;
+      line-height:1.85;
+    }
+
+    .metrics{
+      margin-top:24px;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+    .metric{
+      border:1px solid var(--line-warm);
+      background:var(--surface-soft);
+      border-radius:12px;
+      padding:16px;
+    }
+    .metric-icon{
+      width:21px;height:21px;color:var(--gold);
+      display:flex;align-items:center;justify-content:center;
+      font-size:19px;
+    }
+    .metric-label{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      font-weight:700;
+      letter-spacing:.06em;
+    }
+    .metric-value{
+      margin-top:4px;
+      color:var(--text);
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .highlights{
+      margin-top:24px;
+      display:grid;
+      gap:9px;
+    }
+    .highlight{
+      display:flex;
+      align-items:flex-start;
+      gap:9px;
+      color:#4d453c;
+      font-size:14px;
+    }
+    .spark{color:var(--gold);line-height:1.25}
+
+    .reserve{
+      margin-top:28px;
+      width:100%;
+      height:48px;
+      border:0;
+      border-radius:12px;
+      background:var(--gold);
+      color:#fff;
+      font-size:16px;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+      opacity:.72;
+      cursor:not-allowed;
+    }
+
+    .notice{
+      margin-top:24px;
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      padding:16px;
+      border:1px solid var(--line-warm);
+      border-radius:12px;
+      background:var(--surface-warm);
+      color:var(--muted-2);
+      font-size:14px;
+      line-height:1.55;
+    }
+    .notice-icon{color:var(--gold);font-size:19px}
+
+    .lower{
+      margin-top:32px;
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 380px;
+      gap:24px;
+    }
+    .content-card{padding:28px}
+    h2{
+      margin-bottom:16px;
+      font-family:Georgia, "Times New Roman", serif;
+      color:var(--text-strong);
+      font-size:28px;
+      font-weight:500;
+    }
+    .long-desc{
+      margin:0;
+      white-space:pre-line;
+      color:var(--muted-2);
+      font-size:15px;
+      line-height:1.85;
+    }
+    .feature-list{border-top:0}
+    .feature-row{
+      display:grid;
+      grid-template-columns:120px minmax(0,1fr);
+      gap:12px;
+      padding:12px 0;
+      border-bottom:1px solid var(--line-warm);
+      font-size:14px;
+    }
+    .feature-row:last-child{border-bottom:0}
+    .feature-label{color:#7b6e60;font-weight:600}
+    .feature-value{color:var(--text);overflow-wrap:anywhere}
+
+    .state{
+      min-height:calc(100vh - 80px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .state-box{
+      width:min(100%,448px);
+      padding:28px;
+      text-align:center;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+    }
+    .state-title{
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:26px;
+      color:var(--text-strong);
+    }
+    .state .back-btn{margin-top:20px;border:1px solid var(--line);box-shadow:none}
+
+    .hidden{display:none!important}
+
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .lower{grid-template-columns:1fr}
+    }
+    @media(max-width:640px){
+      .page{padding:16px 14px 28px}
+      .detail-card,.content-card{padding:20px}
+      .metrics{grid-template-columns:1fr}
+      .topbar{align-items:center}
+      .brand{font-size:18px}
+      .thumbs{gap:8px}
+    }
+  </style>
+</head>
+<body>
+  <main id="app" class="page">
+    <div class="topbar">
+      <button class="back-btn" type="button" onclick="goBack()">← <span>Geri Dön</span></button>
+      <div class="brand">Eren Kuyumculuk</div>
+    </div>
+
+    <div id="state" class="state">
+      <div class="state-box">
+        <div id="stateTitle" class="state-title">Ürün hazırlanıyor.</div>
+        <button id="stateBackButton" class="back-btn hidden" type="button" onclick="goBack()">← <span>Geri Dön</span></button>
+      </div>
+    </div>
+
+    <div id="content" class="hidden">
+      <section class="hero">
+        <div>
+          <div class="card image-card">
+            <div id="imageStage" class="image-stage">
+              <div class="image-empty">Görsel bulunamadı</div>
+            </div>
+          </div>
+          <div id="thumbs" class="thumbs hidden"></div>
+        </div>
+
+        <div class="card detail-card">
+          <div class="meta">
+            <span id="catalogPath"></span>
+            <span class="dot"></span>
+            <span>Ürün Kodu: <span id="barcode"></span></span>
+          </div>
+
+          <h1 id="productTitle"></h1>
+
+          <div class="price-row">
+            <div id="price" class="price"></div>
+            <div id="oldPrice" class="old-price hidden"></div>
+          </div>
+
+          <p id="shortDescription" class="short-desc"></p>
+
+          <div class="metrics">
+            <div class="metric">
+              <div class="metric-icon">◇</div>
+              <div class="metric-label">Ayar</div>
+              <div id="karat" class="metric-value">-</div>
+            </div>
+            <div class="metric">
+              <div class="metric-icon">⚖</div>
+              <div class="metric-label">Gram</div>
+              <div id="gram" class="metric-value">-</div>
+            </div>
+            <div class="metric">
+              <div class="metric-icon">▣</div>
+              <div class="metric-label">Stok</div>
+              <div id="stock" class="metric-value">0</div>
+            </div>
+          </div>
+
+          <div id="highlights" class="highlights hidden"></div>
+
+          <button type="button" class="reserve" disabled>
+            ◷ <span>Rezervasyon Oluştur</span>
+          </button>
+
+          <div class="notice">
+            <div class="notice-icon">✓</div>
+            <div>Online ödeme alınmamaktadır. Rezervasyon altyapısı hazırlandığında ürün mağazada güvenle ayrılabilecektir.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lower">
+        <div class="card content-card">
+          <h2>Ürün Açıklaması</h2>
+          <p id="longDescription" class="long-desc"></p>
+        </div>
+
+        <div class="card content-card">
+          <h2>Ürün Bilgileri</h2>
+          <div id="featureList" class="feature-list"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const PRODUCT_API_PREFIX = 'https://api.erenapp.com/api/products/public/key';
+
+    let activePictureIndex = 0;
+    let currentPictures = [];
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    async function init() {
+      const parsedKey = parseProductKey(getProductKeyFromUrl());
+
+      if (!parsedKey) {
+        showState('Ürün bağlantısı geçersiz. URL sonunda slug-barkod bulunamadı.', true);
+        return;
+      }
+
+      showState('Ürün hazırlanıyor.', false);
+
+      try {
+        const product = await loadProduct(parsedKey.slug, parsedKey.barcode);
+        renderProduct(product);
+      } catch (error) {
+        console.error(error);
+        showState('Ürün bulunamadı.', true);
+      }
+    }
+
+    function getProductKeyFromUrl() {
+
+      const params = new URLSearchParams(window.location.search);
+
+      const queryValue =
+        params.get('productKey') ||
+        params.get('key') ||
+        params.get('product');
+
+      if (queryValue) {
+        const productKey = cleanProductKey(queryValue);
+        replaceProductUrl(productKey);
+        return productKey;
+      }
+
+      const hashValue = window.location.hash.replace(/^#\/?/, '').trim();
+      if (hashValue && /-\d+$/.test(hashValue)) {
+        const hashSegments = hashValue.split('/').filter(Boolean);
+        return cleanProductKey(hashSegments[hashSegments.length - 1]);
+      }
+
+      const segments = window.location.pathname
+        .split('/')
+        .filter(Boolean)
+        .map(segment => {
+          try {
+            return decodeURIComponent(segment);
+          } catch {
+            return segment;
+          }
+        });
+
+      for (let i = segments.length - 1; i >= 0; i--) {
+        const candidate = cleanProductKey(segments[i]);
+        if (/^.+-\d+$/.test(candidate)) {
+          return candidate;
+        }
+      }
+
+      return '';
+    }
+
+    function replaceProductUrl(productKey) {
+      if (!productKey || !window.history?.replaceState) return;
+
+      const canonicalPath = `/product/${encodeURIComponent(productKey)}`;
+      if (window.location.pathname !== canonicalPath || window.location.search) {
+        window.history.replaceState(null, document.title, canonicalPath);
+      }
+    }
+
+    function cleanProductKey(value) {
+      return String(value || '')
+        .trim()
+        .replace(/^\/+|\/+$/g, '')
+        .split('?')[0]
+        .split('#')[0];
+    }
+
+    function parseProductKey(productKey) {
+      const value = (productKey || '').trim();
+      if (!value) return null;
+
+      if (/^\d+$/.test(value)) {
+        return { slug: '', barcode: value };
+      }
+
+      const match = value.match(/^(.+)-(\d+)$/);
+      if (!match) return null;
+
+      return {
+        slug: match[1],
+        barcode: match[2]
+      };
+    }
+
+    async function loadProduct(slug, barcode) {
+      const requestUrl =
+        `${PRODUCT_API_PREFIX}/${encodeURIComponent(slug)}/${encodeURIComponent(barcode)}`;
+
+      console.log('Ürün API isteği:', requestUrl);
+
+      const response = await fetch(requestUrl, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json'
+        },
+        cache: 'no-store'
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ürün isteği başarısız: ${response.status}`);
+      }
+
+      const raw = await response.json();
+
+      if (raw?.success === false) {
+        throw new Error(raw?.message || 'API ürün bilgisini döndüremedi.');
+      }
+
+      const product = raw?.data ?? raw?.result ?? raw;
+
+      if (!product?.barcode) {
+        throw new Error('Geçersiz ürün cevabı.');
+      }
+
+      return product;
+    }
+
+    function renderProduct(product) {
+      if (!product) {
+        showState('Ürün bulunamadı.', true);
+        return;
+      }
+
+      const ecommerce = product.ecommerceContent || {};
+      const title = ecommerce.productTitle || product.name || 'Ürün';
+      const activePrice = resolveActivePriceDisplay(product.promotionPriceDisplay, product.priceDisplay);
+      const originalPrice =
+        activePrice &&
+        activePrice === product.promotionPriceDisplay &&
+        isPositivePriceDisplay(product.priceDisplay)
+          ? product.priceDisplay
+          : null;
+
+      setText('catalogPath', product.catalogPathDisplay || product.catalogName || '');
+      setText('barcode', product.barcode || '');
+      setText('productTitle', title);
+      setText(
+        'price',
+        activePrice
+          ? `${activePrice} ${product.priceUnitSymbol || ''}`.trim()
+          : 'Fiyat mağazada'
+      );
+
+      const oldPriceEl = document.getElementById('oldPrice');
+      if (originalPrice) {
+        oldPriceEl.textContent = `${originalPrice} ${product.priceUnitSymbol || ''}`.trim();
+        oldPriceEl.classList.remove('hidden');
+      } else {
+        oldPriceEl.classList.add('hidden');
+      }
+
+      setText(
+        'shortDescription',
+        ecommerce.shortDescription || 'Bu ürün mağazamızda rezervasyon için görüntülenebilir.'
+      );
+
+      setText('karat', product.karatCodeDisplay || product.karat || '-');
+      setText('gram', product.gramDisplay || '-');
+      setText('stock', product.stockAmount ?? '0');
+
+      renderPictures(product, title);
+      renderHighlights(ecommerce.highlights || []);
+      renderLongDescription(product, ecommerce);
+      renderFeatures(product, ecommerce);
+
+      document.getElementById('state').classList.add('hidden');
+      document.getElementById('content').classList.remove('hidden');
+    }
+
+    function renderPictures(product, title) {
+      const pictures = Array.isArray(product.pictures)
+        ? product.pictures
+            .map(p => ({
+              id: p.id,
+              url: normalizeAssetUrl(p.link || p.path),
+              isDefault: !!p.isDefault,
+              sortOrder: p.sortOrder ?? 0
+            }))
+            .filter(p => !!p.url)
+        : [];
+
+      currentPictures = pictures.length
+        ? pictures
+        : product.displayImageUrl
+          ? [{
+              id: `${product.id || 'product'}-display`,
+              url: normalizeAssetUrl(product.displayImageUrl),
+              isDefault: true,
+              sortOrder: 0
+            }]
+          : [];
+
+      currentPictures.sort((a, b) => {
+        if (a.isDefault !== b.isDefault) return a.isDefault ? -1 : 1;
+        return a.sortOrder - b.sortOrder;
+      });
+
+      activePictureIndex = 0;
+      renderActivePicture(title);
+      renderThumbnails(title);
+    }
+
+    function renderActivePicture(title) {
+      const stage = document.getElementById('imageStage');
+      stage.innerHTML = '';
+
+      const picture = currentPictures[activePictureIndex];
+      if (!picture) {
+        const empty = document.createElement('div');
+        empty.className = 'image-empty';
+        empty.textContent = 'Görsel bulunamadı';
+        stage.appendChild(empty);
+        return;
+      }
+
+      const img = document.createElement('img');
+      img.src = picture.url;
+      img.alt = title || 'Ürün görseli';
+      img.loading = 'eager';
+      img.decoding = 'async';
+      stage.appendChild(img);
+    }
+
+    function renderThumbnails(title) {
+      const thumbs = document.getElementById('thumbs');
+      thumbs.innerHTML = '';
+
+      if (currentPictures.length <= 1) {
+        thumbs.classList.add('hidden');
+        return;
+      }
+
+      thumbs.classList.remove('hidden');
+
+      currentPictures.slice(0, 5).forEach((picture, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `thumb${index === activePictureIndex ? ' active' : ''}`;
+        button.addEventListener('click', () => {
+          activePictureIndex = index;
+          renderActivePicture(title);
+          renderThumbnails(title);
+        });
+
+        const img = document.createElement('img');
+        img.src = picture.url;
+        img.alt = '';
+        img.loading = 'lazy';
+        button.appendChild(img);
+        thumbs.appendChild(button);
+      });
+    }
+
+    function renderHighlights(highlights) {
+      const root = document.getElementById('highlights');
+      root.innerHTML = '';
+
+      if (!Array.isArray(highlights) || highlights.length === 0) {
+        root.classList.add('hidden');
+        return;
+      }
+
+      root.classList.remove('hidden');
+
+      highlights.slice(0, 4).forEach(text => {
+        const row = document.createElement('div');
+        row.className = 'highlight';
+
+        const icon = document.createElement('span');
+        icon.className = 'spark';
+        icon.textContent = '✦';
+
+        const value = document.createElement('span');
+        value.textContent = text;
+
+        row.append(icon, value);
+        root.appendChild(row);
+      });
+    }
+
+    function renderLongDescription(product, ecommerce) {
+      setText(
+        'longDescription',
+        ecommerce.longDescription ||
+        ecommerce.shortDescription ||
+        product.name ||
+        ''
+      );
+    }
+
+    function renderFeatures(product, ecommerce) {
+      const rows = [
+        {
+          label: 'Ayar',
+          value: product.karatCodeDisplay
+            ? `${product.karatCodeDisplay} Ayar`
+            : product.karat
+              ? `${product.karat} Ayar`
+              : null
+        },
+        {
+          label: 'Gram',
+          value: product.gramDisplay ? `${product.gramDisplay} gr` : null
+        },
+        {
+          label: 'Stok',
+          value: `${product.stockAmount ?? 0} adet`
+        }
+      ];
+
+      const attributes = Array.isArray(product.attributeValues)
+        ? product.attributeValues
+        : [];
+
+      for (const attribute of attributes) {
+        rows.push({
+          label: attribute.attributeName,
+          value: formatBooleanDisplay(attribute.value)
+        });
+      }
+
+      const technical = Array.isArray(ecommerce.technicalFeatures)
+        ? ecommerce.technicalFeatures
+        : [];
+
+      for (const feature of technical) {
+        const exists = rows.some(
+          row => trLower(row.label) === trLower(feature.name)
+        );
+
+        if (!exists) {
+          rows.push({
+            label: feature.name,
+            value: formatBooleanDisplay(feature.value)
+          });
+        }
+      }
+
+      const root = document.getElementById('featureList');
+      root.innerHTML = '';
+
+      rows
+        .filter(row => row.value !== null && row.value !== undefined && row.value !== '')
+        .forEach(row => {
+          const item = document.createElement('div');
+          item.className = 'feature-row';
+
+          const label = document.createElement('span');
+          label.className = 'feature-label';
+          label.textContent = row.label;
+
+          const value = document.createElement('span');
+          value.className = 'feature-value';
+          value.textContent = row.value;
+
+          item.append(label, value);
+          root.appendChild(item);
+        });
+    }
+
+
+    function normalizeAssetUrl(value) {
+      if (!value) return '';
+
+      const url = String(value).trim();
+
+      // API bazen görsel linkini http olarak döndürüyor.
+      // HTTPS ürün sayfasında mixed-content engeline takılmaması için normalize edilir.
+      if (url.startsWith('http://api.erenapp.com/')) {
+        return url.replace('http://api.erenapp.com/', 'https://api.erenapp.com/');
+      }
+
+      // Relative /api/files/... path'i geldiyse API domainine yönlendir.
+      if (url.startsWith('/api/files/')) {
+        return `https://api.erenapp.com${url}`;
+      }
+
+      return url;
+    }
+
+    function showState(title, showBack) {
+      document.getElementById('content').classList.add('hidden');
+      document.getElementById('state').classList.remove('hidden');
+      setText('stateTitle', title);
+
+      document
+        .getElementById('stateBackButton')
+        .classList.toggle('hidden', !showBack);
+    }
+
+    function setText(id, value) {
+      document.getElementById(id).textContent = value ?? '';
+    }
+
+    function formatBooleanDisplay(value) {
+      const original = String(value ?? '');
+      const normalized = trLower(original.trim());
+
+      if (normalized === 'true') return 'Evet';
+      if (normalized === 'false') return 'Hayır';
+      return original;
+    }
+
+    function trLower(value) {
+      return String(value ?? '').toLocaleLowerCase('tr-TR');
+    }
+
+    function resolveActivePriceDisplay(promotionPriceDisplay, priceDisplay) {
+      if (isPositivePriceDisplay(promotionPriceDisplay)) return promotionPriceDisplay;
+      if (isPositivePriceDisplay(priceDisplay)) return priceDisplay;
+      return '';
+    }
+
+    function isPositivePriceDisplay(value) {
+      if (!value) return false;
+
+      const normalized = String(value)
+        .replace(/\s/g, '')
+        .replace(/[₺TL]/gi, '')
+        .trim();
+
+      if (!normalized) return false;
+
+      const numeric = Number(
+        normalized
+          .replace(/\./g, '')
+          .replace(',', '.')
+      );
+
+      return Number.isFinite(numeric) && numeric > 0;
+    }
+
+    function goBack() {
+      const searchParams = new URLSearchParams(window.location.search);
+      const returnUrl = searchParams.get('returnUrl');
+
+      if (returnUrl && isAllowedReturnUrl(returnUrl)) {
+        window.location.href = returnUrl;
+        return;
+      }
+
+      if (window.history.length > 1) {
+        window.history.back();
+        return;
+      }
+
+      window.location.href = 'https://www.google.com';
+    }
+
+    function isAllowedReturnUrl(returnUrl) {
+      try {
+        const url = new URL(returnUrl);
+        return url.protocol === 'https:' && (
+          url.hostname === 'google.com' ||
+          url.hostname.endsWith('.google.com') ||
+          url.hostname === 'maps.app.goo.gl' ||
+          url.hostname === 'g.page'
+        );
+      } catch {
+        return false;
+      }
+    }
+  </script>
+</body>
+</html>
