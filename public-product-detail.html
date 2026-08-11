@@ -222,7 +222,6 @@
     .spark{color:var(--gold);line-height:1.25}
 
     .reserve{
-      margin-top:28px;
       width:100%;
       height:48px;
       border:0;
@@ -239,20 +238,40 @@
       cursor:not-allowed;
     }
 
-    .notice{
+    .actions{
+      margin-top:28px;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .request-stock{
+      width:100%;
+      height:48px;
+      border:1px solid #b7dfbf;
+      border-radius:12px;
+      background:#d9f2dd;
+      color:#285b39;
+      font-size:16px;
+      font-weight:600;
+      cursor:not-allowed;
+    }
+
+    .stock-alert{
       margin-top:24px;
       display:flex;
       align-items:flex-start;
       gap:12px;
-      padding:16px;
-      border:1px solid var(--line-warm);
+      padding:12px 16px;
+      border:1px solid #d8e9c8;
       border-radius:12px;
-      background:var(--surface-warm);
-      color:var(--muted-2);
+      background:#f3faed;
+      color:#3f6b2a;
       font-size:14px;
+      font-weight:600;
       line-height:1.55;
     }
-    .notice-icon{color:var(--gold);font-size:19px}
+    .stock-alert-icon{font-size:17px;line-height:1.45}
 
     .lower{
       margin-top:32px;
@@ -321,6 +340,7 @@
       .page{padding:16px 14px 28px}
       .detail-card,.content-card{padding:20px}
       .metrics{grid-template-columns:1fr}
+      .actions{grid-template-columns:1fr}
       .topbar{align-items:center}
       .brand{font-size:18px}
       .thumbs{gap:8px}
@@ -388,13 +408,18 @@
 
           <div id="highlights" class="highlights hidden"></div>
 
-          <button type="button" class="reserve" disabled>
-            ◷ <span>Rezervasyon Oluştur</span>
-          </button>
+          <div id="outOfStockAlert" class="stock-alert hidden">
+            <div class="stock-alert-icon">✓</div>
+            <div>Bu ürün şu anda stokta yok. Talep butonu hazırlandığında benzer ürün için bilgi bırakabilirsiniz.</div>
+          </div>
 
-          <div class="notice">
-            <div class="notice-icon">✓</div>
-            <div>Online ödeme alınmamaktadır. Rezervasyon altyapısı hazırlandığında ürün mağazada güvenle ayrılabilecektir.</div>
+          <div class="actions">
+            <button id="reserveButton" type="button" class="reserve" disabled>
+              ◷ <span>Rezervasyon Oluştur</span>
+            </button>
+            <button id="requestStockButton" type="button" class="request-stock" disabled>
+              Ben Bu Üründen İstiyorum
+            </button>
           </div>
         </div>
       </section>
@@ -558,6 +583,7 @@
 
       const ecommerce = product.ecommerceContent || {};
       const title = ecommerce.productTitle || product.name || 'Ürün';
+      const isOutOfStock = product.stockAmount <= 0;
       const activePrice = resolveActivePriceDisplay(product.promotionPriceDisplay, product.priceDisplay);
       const originalPrice =
         activePrice &&
@@ -589,9 +615,15 @@
         ecommerce.shortDescription || 'Bu ürün mağazamızda rezervasyon için görüntülenebilir.'
       );
 
+      const gramDisplay = formatGramDisplay(product.gramDisplay || product.gram);
+
       setText('karat', product.karatCodeDisplay || product.karat || '-');
-      setText('gram', product.gramDisplay || '-');
-      setText('stock', product.stockAmount ?? '0');
+      setText('gram', gramDisplay || '-');
+      setText('stock', isOutOfStock ? 'Stokta yok' : product.stockAmount ?? '0');
+
+      document.getElementById('outOfStockAlert').classList.toggle('hidden', !isOutOfStock);
+      document.getElementById('reserveButton').disabled = true;
+      document.getElementById('requestStockButton').disabled = true;
 
       renderPictures(product, title);
       renderHighlights(ecommerce.highlights || []);
@@ -724,6 +756,7 @@
     }
 
     function renderFeatures(product, ecommerce) {
+      const gramDisplay = formatGramDisplay(product.gramDisplay || product.gram);
       const rows = [
         {
           label: 'Ayar',
@@ -735,7 +768,7 @@
         },
         {
           label: 'Gram',
-          value: product.gramDisplay ? `${product.gramDisplay} gr` : null
+          value: gramDisplay ? `${gramDisplay} gr` : null
         },
         {
           label: 'Stok',
@@ -834,6 +867,36 @@
       if (normalized === 'true') return 'Evet';
       if (normalized === 'false') return 'Hayır';
       return original;
+    }
+
+    function formatGramDisplay(value) {
+      if (value === null || value === undefined || value === '') return '';
+      if (typeof value === 'number') {
+        return value.toLocaleString('tr-TR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+
+      const original = String(value).trim();
+      const sanitized = original.replace(/[^\d,.-]/g, '');
+      if (!sanitized) return original;
+
+      const hasComma = sanitized.includes(',');
+      const hasDot = sanitized.includes('.');
+      const normalized = hasComma
+        ? sanitized.replace(/\./g, '').replace(',', '.')
+        : hasDot
+          ? sanitized.replace(/,/g, '')
+          : sanitized;
+      const numeric = Number(normalized);
+
+      if (!Number.isFinite(numeric)) return original;
+
+      return numeric.toLocaleString('tr-TR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     }
 
     function trLower(value) {
