@@ -167,6 +167,12 @@
       font-size:18px;
       text-decoration:line-through;
     }
+    .variant-section{margin-top:24px}
+    .variant-options{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+    .variant-option{position:relative;min-width:64px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text);cursor:pointer}
+    .variant-option[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+    .variant-option:disabled{color:var(--muted);background:#eeeae4;cursor:not-allowed;padding-top:26px}
+    .sold-label{position:absolute;top:4px;left:0;right:0;font-size:10px;font-weight:700;color:#8b574b}
     .short-desc{
       margin:20px 0 0;
       max-width:680px;
@@ -382,8 +388,13 @@
           <h1 id="productTitle"></h1>
 
           <div class="price-row">
-            <div id="price" class="price"></div>
+            <div id="price" class="price" aria-live="polite"></div>
             <div id="oldPrice" class="old-price hidden"></div>
+          </div>
+
+          <div id="variantSection" class="variant-section hidden">
+            <div>Beden / Varyant</div>
+            <div id="variantOptions" class="variant-options" role="group" aria-label="Beden seçimi"></div>
           </div>
 
           <p id="shortDescription" class="short-desc"></p>
@@ -443,6 +454,8 @@
 
     let activePictureIndex = 0;
     let currentPictures = [];
+    let productFamily = [];
+    let familyContent = {};
 
     document.addEventListener('DOMContentLoaded', init);
 
@@ -458,6 +471,8 @@
 
       try {
         const product = await loadProduct(parsedKey.slug, parsedKey.barcode);
+        productFamily = Array.isArray(product.variants) ? product.variants : [];
+        familyContent = product.ecommerceContent || {};
         renderProduct(product);
       } catch (error) {
         console.error(error);
@@ -581,7 +596,7 @@
         return;
       }
 
-      const ecommerce = product.ecommerceContent || {};
+      const ecommerce = product.ecommerceContent || familyContent;
       const title = ecommerce.productTitle || product.name || 'Ürün';
       const isOutOfStock = product.stockAmount <= 0;
       const activePrice = resolveActivePriceDisplay(product.promotionPriceDisplay, product.priceDisplay);
@@ -625,6 +640,7 @@
       document.getElementById('reserveButton').disabled = true;
       document.getElementById('requestStockButton').disabled = true;
 
+      renderVariants(product);
       renderPictures(product, title);
       renderHighlights(ecommerce.highlights || []);
       renderLongDescription(product, ecommerce);
@@ -632,6 +648,34 @@
 
       document.getElementById('state').classList.add('hidden');
       document.getElementById('content').classList.remove('hidden');
+    }
+
+    function renderVariants(product) {
+      const section = document.getElementById('variantSection');
+      const root = document.getElementById('variantOptions');
+      root.replaceChildren();
+      section.classList.toggle('hidden', productFamily.length <= 1);
+      for (const variant of productFamily) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'variant-option';
+        button.disabled = !(variant.stockAmount > 0);
+        button.setAttribute('aria-pressed', String(variant.id === product.id));
+        const label = variant.variantLabel || variant.name || variant.barcode;
+        button.setAttribute('aria-label', `${label}${button.disabled ? ' — Satıldı' : ''}`);
+        if (button.disabled) {
+          const sold = document.createElement('span');
+          sold.className = 'sold-label';
+          sold.textContent = 'Satıldı';
+          button.appendChild(sold);
+        }
+        button.appendChild(document.createTextNode(label));
+        button.addEventListener('click', () => {
+          if (button.disabled) return;
+          renderProduct(variant);
+        });
+        root.appendChild(button);
+      }
     }
 
     function renderPictures(product, title) {
