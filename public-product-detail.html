@@ -417,6 +417,7 @@
             </div>
           </div>
 
+
           <p id="shortDescription" class="short-desc"></p>
 
           <div class="metrics">
@@ -506,7 +507,7 @@
 
       try {
         const product = await loadProduct(parsedKey.slug, parsedKey.barcode);
-        mergeProductFamily(product);
+        setProductFamily(product);
         familyContent = product.ecommerceContent || {};
         renderProduct(product);
       } catch (error) {
@@ -633,7 +634,8 @@
 
       const ecommerce = product.ecommerceContent || familyContent;
       const title = ecommerce.productTitle || product.name || 'Ürün';
-      const isOutOfStock = product.stockAmount <= 0;
+      const stockAmount = resolveStockAmount(product);
+      const isOutOfStock = stockAmount <= 0;
       const activePrice = resolveActivePriceDisplay(product.promotionPriceDisplay, product.priceDisplay);
       const originalPrice =
         activePrice &&
@@ -669,7 +671,7 @@
 
       setText('karat', product.karatCodeDisplay || product.karat || '-');
       setText('gram', gramDisplay || '-');
-      setText('stock', isOutOfStock ? 'Stokta yok' : product.stockAmount ?? '0');
+      setText('stock', isOutOfStock ? 'Stokta yok' : stockAmount);
 
       document.getElementById('outOfStockAlert').classList.toggle('hidden', !isOutOfStock);
       document.getElementById('reserveButton').disabled = true;
@@ -689,20 +691,14 @@
       return String(product.id || product.barcode || '');
     }
 
-    // Keep siblings and descendants available after selecting any family member.
-    function mergeProductFamily(product) {
-      const family = new Map(productFamily.map(item => [productIdentity(item), item]));
-      const visited = new Set();
-      function visit(item) {
-        if (!item || visited.has(item)) return;
-        visited.add(item);
-        const key = productIdentity(item);
-        if (key) family.set(key, { ...family.get(key), ...item });
-        if (Array.isArray(item.variants)) item.variants.forEach(visit);
-      }
-      if (Array.isArray(product.variants)) product.variants.forEach(visit);
-      visit(product);
-      productFamily = [...family.values()];
+    function setProductFamily(product) {
+      const variants = Array.isArray(product.variants) ? product.variants : [];
+      productFamily = variants.length ? variants : [product];
+    }
+
+    function containsProduct(variant, product) {
+      return productIdentity(variant) === productIdentity(product) ||
+        (variant.variants || []).some(child => containsProduct(child, product));
     }
 
     function variantLabel(product) {
@@ -712,7 +708,6 @@
     }
 
     function renderVariants(product) {
-      mergeProductFamily(product);
       const root = document.getElementById('variantOptions');
       const modalRoot = document.getElementById('modalVariantOptions');
       const scrollLeft = root.scrollLeft;
@@ -726,8 +721,8 @@
           const button = document.createElement('button');
           button.type = 'button';
           button.className = 'variant-option';
-          button.disabled = !(variant.stockAmount > 0);
-          button.setAttribute('aria-pressed', String(productIdentity(variant) === productIdentity(product)));
+          button.disabled = !(resolveStockAmount(variant) > 0);
+          button.setAttribute('aria-pressed', String(containsProduct(variant, product)));
           const fullLabel = variant.variantLabel || variant.name || variant.barcode;
           button.title = fullLabel;
           button.setAttribute('aria-label', `${fullLabel}${button.disabled ? ' — Satıldı' : ''}`);
@@ -752,6 +747,15 @@
         }
       }
       root.scrollLeft = scrollLeft;
+    }
+
+    function resolveStockAmount(product) {
+      // The top-level list contains choices; each choice's children are stock units.
+      const variant = productFamily.find(item => containsProduct(item, product));
+      if (variant && Array.isArray(variant.variants) && variant.variants.length) {
+        return variant.variants.length;
+      }
+      return Number(product.stockAmount) || 0;
     }
 
     function renderPictures(product, title) {
@@ -892,7 +896,7 @@
         },
         {
           label: 'Stok',
-          value: `${product.stockAmount ?? 0} adet`
+          value: `${resolveStockAmount(product)} adet`
         }
       ];
 
