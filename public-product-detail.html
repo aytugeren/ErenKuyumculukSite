@@ -634,7 +634,7 @@
 
       const ecommerce = product.ecommerceContent || familyContent;
       const title = ecommerce.productTitle || product.name || 'Ürün';
-      const stockAmount = resolveStockAmount(product);
+      const stockAmount = product.stockAmount;
       const isOutOfStock = stockAmount <= 0;
       const activePrice = resolveActivePriceDisplay(product.promotionPriceDisplay, product.priceDisplay);
       const originalPrice =
@@ -671,7 +671,7 @@
 
       setText('karat', product.karatCodeDisplay || product.karat || '-');
       setText('gram', gramDisplay || '-');
-      setText('stock', isOutOfStock ? 'Stokta yok' : stockAmount);
+      setText('stock', stockAmount ?? '-');
 
       document.getElementById('outOfStockAlert').classList.toggle('hidden', !isOutOfStock);
       document.getElementById('reserveButton').disabled = true;
@@ -721,7 +721,7 @@
           const button = document.createElement('button');
           button.type = 'button';
           button.className = 'variant-option';
-          button.disabled = !(resolveStockAmount(variant) > 0);
+          button.disabled = !(variant.stockAmount > 0);
           button.setAttribute('aria-pressed', String(containsProduct(variant, product)));
           const fullLabel = variant.variantLabel || variant.name || variant.barcode;
           button.title = fullLabel;
@@ -747,15 +747,6 @@
         }
       }
       root.scrollLeft = scrollLeft;
-    }
-
-    function resolveStockAmount(product) {
-      // The top-level list contains choices; each choice's children are stock units.
-      const variant = productFamily.find(item => containsProduct(item, product));
-      if (variant && Array.isArray(variant.variants) && variant.variants.length) {
-        return variant.variants.length;
-      }
-      return Number(product.stockAmount) || 0;
     }
 
     function renderPictures(product, title) {
@@ -896,7 +887,7 @@
         },
         {
           label: 'Stok',
-          value: `${resolveStockAmount(product)} adet`
+          value: product.stockAmount == null ? null : `${product.stockAmount} adet`
         }
       ];
 
